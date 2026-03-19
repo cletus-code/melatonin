@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Melatonin 🐩</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    @font-face {
+      font-family: 'Gota';
+      src: url('GotaRegular.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Gota';
+      src: url('GotaLight.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:  #daf0f8;
+      --text:     #2a2540;
+      --muted:    #6a7a9a;
+      --blush:    #f2c8de;
+      --sky:      #b8dcf0;
+      --gold:     #f5e090;
+      --lilac:    #ddd0f8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 20px 64px;
+    }
+
+    /* ── Y2K aura blob background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(160deg, #daf0f8 0%, #e8f6fc 100%),
+        radial-gradient(ellipse 55% 45% at 18% 58%, #f5e09088 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 85% 12%, #f2c8de99 0%, transparent 65%),
+        radial-gradient(ellipse 45% 40% at 78% 88%, #ddd0f880 0%, transparent 65%),
+        radial-gradient(ellipse 40% 35% at  5%  8%, #b8dcf066 0%, transparent 60%);
+      animation: blobDrift 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes blobDrift {
+      0%   { transform: scale(1)    translateX(0px)  translateY(0px); }
+      33%  { transform: scale(1.04) translateX(8px)  translateY(-6px); }
+      66%  { transform: scale(0.97) translateX(-6px) translateY(8px); }
+      100% { transform: scale(1.02) translateX(4px)  translateY(-4px); }
+    }
+
+    /* ══════════════════════════════════════════
+       LIQUID GLASS CARD  (iOS 26 style)
+    ══════════════════════════════════════════ */
+    .card {
+      position: relative;
+      max-width: 480px;
+      width: 100%;
+      border-radius: 32px;
+      overflow: hidden;
+      padding: 44px 36px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      animation: cardIn 0.75s cubic-bezier(.22,1,.36,1) both;
+
+      /* Core glass */
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(52px) saturate(200%) brightness(1.06);
+      -webkit-backdrop-filter: blur(52px) saturate(200%) brightness(1.06);
+
+      /* Layered shadow + inset rim */
+      box-shadow:
+        0 24px 64px rgba(80, 110, 180, 0.18),
+        0  6px 20px rgba(80, 110, 180, 0.10),
+        inset 0  1.5px 0 rgba(255, 255, 255, 0.72),  /* bright top rim  */
+        inset 0 -1px  0 rgba(255, 255, 255, 0.18),   /* subtle base rim */
+        inset 1.5px 0 0 rgba(255, 255, 255, 0.40),   /* left edge       */
+        inset -1px  0 0 rgba(255, 255, 255, 0.18);   /* right edge      */
+
+      border: 1px solid rgba(255, 255, 255, 0.38);
+    }
+
+    /* Specular sheen — the "liquid" highlight across the top half */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -10%; width: 120%; height: 52%;
+      background: linear-gradient(
+        175deg,
+        rgba(255, 255, 255, 0.32) 0%,
+        rgba(255, 255, 255, 0.10) 55%,
+        transparent 100%
+      );
+      border-radius: 32px 32px 60% 60% / 32px 32px 40% 40%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Iridescent rainbow rim at the bottom edge */
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg,
+        rgba(242, 200, 222, 0.80),
+        rgba(184, 220, 240, 0.80),
+        rgba(221, 208, 248, 0.80),
+        rgba(245, 224, 144, 0.80),
+        rgba(242, 200, 222, 0.80)
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* All direct children sit above the pseudo-element overlays */
+    .card > * { position: relative; z-index: 1; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(32px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+
+    /* ── photo grid (photos panel) ── */
+
+    /* ── name ── */
+    h1 {
+      font-family: 'Gota', 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 3.9rem;
+      background: linear-gradient(120deg, #e090b8, #88b8e0, #c0a8e8, #f0c850);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+      animation: shimmer 6s ease infinite;
+      background-size: 250% auto;
+      margin-bottom: -8px;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0%   center; }
+      50%  { background-position: 100% center; }
+      100% { background-position: 0%   center; }
+    }
+
+    /* ── subtitle ── */
+    .subtitle {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    /* ── menu nav bar ── */
+    .menu-nav {
+      display: flex;
+      width: 100%;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.20);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.50),
+        0 2px 12px rgba(100,130,200,0.10);
+      padding: 5px;
+      gap: 3px;
+    }
+
+    .menu-nav button {
+      flex: 1;
+      font-family: 'Gota', 'Nunito', sans-serif;
+      font-weight: 300;
+      font-size: 0.70rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      border-radius: 99px;
+      padding: 9px 4px;
+      cursor: pointer;
+      transition: background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .menu-nav button:hover { color: var(--text); background: rgba(255,255,255,0.38); }
+
+    .menu-nav button.active {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--text);
+      box-shadow:
+        0 2px 12px rgba(100,130,200,0.14),
+        inset 0 1px 0 rgba(255,255,255,0.80);
+      font-weight: 600;
+    }
+
+    /* ── panels wrapper ── */
+    .panels {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      transition: height 0.45s cubic-bezier(.22,1,.36,1);
+    }
+
+    .panel {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+    }
+
+    /* inactive panels are absolute, hidden off-screen */
+    .panel:not(.active) {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    /* active panel sets natural height */
+    .panel.active {
+      position: relative;
+      opacity: 1;
+    }
+
+    /* ── divider ── */
+    .divider {
+      width: 48px; height: 3px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--blush), var(--sky));
+    }
+
+    /* ── shared body text style (all-caps Nunito 600) ── */
+    .bio, .panel-text, .album-note {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 2;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-align: center;
+      max-width: 390px;
+    }
+
+    .panel-text { max-width: 400px; }
+
+    /* ── panel heading ── */
+    .panel-heading {
+      font-family: 'Gota', 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 1.35rem;
+      background: linear-gradient(120deg, #e090b8, #88b8e0, #c0a8e8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── photos grid ── */
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .album-cell {
+      aspect-ratio: 1;
+      border-radius: 14px;
+      overflow: hidden;
+      /* gradient shows through if image hasn't loaded yet */
+      background: linear-gradient(135deg, var(--blush) 0%, var(--lilac) 50%, var(--sky) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    /* broken image fallback icon */
+    .album-cell img[src=""] ,
+    .album-cell img:not([src]) {
+      opacity: 0;
+    }
+
+    .album-cell img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 14px;
+      transition: transform 0.35s cubic-bezier(.22,1,.36,1);
+    }
+
+    .album-cell img:hover { transform: scale(1.06); }
+
+    /* ── info bullet list ── */
+    .info-list {
+      list-style: none;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 4px;
+    }
+
+    .info-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1.7;
+      text-align: left;
+    }
+
+    .info-list li .emoji {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      line-height: 1.5;
+      /* prevent emoji from being uppercased weirdly */
+      text-transform: none;
+    }
+
+    /* ── links ── */
+    .links { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      padding: 14px 24px;
+      border-radius: 99px;
+      transition: transform 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.25s ease, background 0.25s ease;
+
+      /* glass buttons */
+      background: rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.50);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.60),
+        0 4px 18px rgba(100,130,200,0.12);
+      color: var(--text);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .link-btn:hover  { transform: translateY(-3px) scale(1.02); box-shadow: inset 0 1px 0 rgba(255,255,255,0.70), 0 8px 28px rgba(100,130,200,0.22); }
+    .link-btn:active { transform: translateY(0) scale(0.98); }
+
+    .btn-instagram { background: rgba(242, 200, 222, 0.35); }
+    .btn-instagram:hover { background: rgba(242, 200, 222, 0.55); }
+
+    .btn-email { background: rgba(184, 220, 240, 0.35); }
+    .btn-email:hover { background: rgba(184, 220, 240, 0.55); }
+
+    .icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.70; }
+
+    /* ── footer ── */
+    .footer {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 480px) {
+      .card { padding: 36px 20px 42px; }
+      h1    { font-size: 3.1rem; }
+      .menu-nav button { font-size: 0.63rem; padding: 8px 3px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- Name + subtitle (no profile photo — viewer already sees Mela in person) -->
+    <h1>Melatonin</h1>
+    <p class="subtitle">Mela &nbsp;·&nbsp; Moyen Poodle &nbsp;·&nbsp; 2021</p>
+
+    <!-- Menu nav -->
+    <nav class="menu-nav" role="tablist">
+      <button class="active" data-panel="home"      role="tab">Home</button>
+      <button               data-panel="backstory" role="tab">Backstory</button>
+      <button               data-panel="photos"    role="tab">Photos</button>
+      <button               data-panel="info"      role="tab">Info</button>
+    </nav>
+
+    <!-- Panels -->
+    <div class="panels" id="panels-container">
+
+      <!-- HOME -->
+      <div class="panel active" id="panel-home" role="tabpanel">
+        <div class="divider"></div>
+        <p class="bio">
+          Rescued from the streets of Changsha, China in 2023, I am Melatonin —
+          Mela for short. I am a moyen poodle of ambiguous stature, born around 2021,
+          whose early years on the streets somehow resulted in both impeccable survival
+          instincts and impossibly high standards. Beyond the street-chic origin story,
+          I am a fully certified psychiatric service dog trained in deep pressure therapy.
+          I am simultaneously unhinged and therapeutic. It's a gift.
+        </p>
+        <div class="divider"></div>
+        <div class="links">
+          <a class="link-btn btn-instagram"
+             href="https://www.instagram.com/nacetylfivemethoxytryptamine?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="0.01" fill="currentColor" stroke-width="3"/>
+            </svg>
+            @nacetylfivemethoxytryptamine
+          </a>
+          <a class="link-btn btn-email" href="mailto:pengzhangyicleo@gmail.com">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="3"/>
+              <polyline points="2,4 12,13 22,4"/>
+            </svg>
+            Get in touch
+          </a>
+        </div>
+      </div>
+
+      <!-- BACKSTORY -->
+      <div class="panel" id="panel-backstory" role="tabpanel">
+        <div class="divider"></div>
+        <p class="panel-heading">Backstory</p>
+        <p class="panel-text">
+          My origin story? Think less "fairy-tale rescue" and more "strategic positioning."
+          In the summer of 2023, I was casually haunting a hair salon in Changsha, China —
+          accepting handouts, cultivating mystique — when my human walked in for a bleach job
+          and apparently decided I was a better investment than highlights. She wasn't wrong.
+          <br><br>
+          I was, at the time, unusually emaciated — a fact I attribute entirely to the salon's
+          uninspired menu. My human noticed, took me home, and the rest is history.
+          I am a moyen poodle, or possibly a standard who simply decided full-size was
+          unnecessary effort — the jury is still out. Born around 2021, my early years
+          were spent honing the art of survival on the streets of Changsha.
+          <br><br>
+          I now live indoors. It suits me.
+        </p>
+        <div class="divider"></div>
+      </div>
+
+      <!-- PHOTOS -->
+      <div class="panel" id="panel-photos" role="tabpanel">
+        <div class="divider"></div>
+        <p class="panel-heading">Photos</p>
+        <div class="album-grid">
+          <div class="album-cell"><img src="photo1.jpg" alt="Mela and her Siamese cat"></div>
+          <div class="album-cell"><img src="photo2.jpg" alt="Mela napping in a boutique"></div>
+          <div class="album-cell"><img src="photo3.jpg" alt="Mela portrait at golden hour"></div>
+          <div class="album-cell"><img src="photo4.jpg" alt="Mela strutting on the sidewalk"></div>
+          <div class="album-cell"><img src="photo5.jpg" alt="Mela in the forest"></div>
+          <div class="album-cell"><img src="photo6.jpg" alt="Mela at work as a service dog"></div>
+          <div class="album-cell"><img src="photo7.jpg" alt="Mela relaxing in the park"></div>
+          <div class="album-cell"><img src="photo8.jpg" alt="Mela in her raincoat and boots"></div>
+        </div>
+        <div class="divider"></div>
+      </div>
+
+      <!-- INFO -->
+      <div class="panel" id="panel-info" role="tabpanel">
+        <div class="divider"></div>
+        <p class="panel-heading">Info</p>
+        <ul class="info-list">
+          <li><span class="emoji">🐩</span><span>Moyen poodle — or possibly a standard who decided full-size was too much effort</span></li>
+          <li><span class="emoji">🎂</span><span>Born approx. 2021</span></li>
+          <li><span class="emoji">🇨🇳</span><span>Rescued from the streets of Changsha, China</span></li>
+          <li><span class="emoji">🧠</span><span>Fully certified psychiatric service dog — trained in deep pressure therapy</span></li>
+          <li><span class="emoji">🐈</span><span>Cohabitates with a Siamese cat. The cuddling is non-negotiable.</span></li>
+          <li><span class="emoji">🐦</span><span>Professional bird surveillance officer. Off duty only in theory.</span></li>
+          <li><span class="emoji">🔴</span><span>Chases red balls with fierce conviction. Does not retrieve them.</span></li>
+          <li><span class="emoji">🥩</span><span>Committed carnivore — Challah and rice cooked in chicken fat excepted</span></li>
+          <li><span class="emoji">⚡</span><span>Docile at rest. Unhinged in motion.</span></li>
+        </ul>
+        <div class="divider"></div>
+      </div>
+
+    </div><!-- /panels -->
+
+    <p class="footer">🐾 tap · wag · repeat</p>
+
+  </div><!-- /card -->
+
+  <script>
+    const panelOrder = ['home', 'backstory', 'photos', 'info'];
+    const buttons    = document.querySelectorAll('.menu-nav button');
+    const container  = document.getElementById('panels-container');
+    let currentIdx   = 0;
+    let animating    = false;
+
+    // Set initial container height
+    container.style.height = document.getElementById('panel-home').offsetHeight + 'px';
+    // Allow auto after initial paint
+    requestAnimationFrame(() => { container.style.height = 'auto'; });
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (animating) return;
+        const targetId  = btn.dataset.panel;
+        const targetIdx = panelOrder.indexOf(targetId);
+        if (targetIdx === currentIdx) return;
+
+        const direction   = targetIdx > currentIdx ? 1 : -1; // 1 = swipe left, -1 = swipe right
+        const oldPanel    = document.querySelector('.panel.active');
+        const newPanel    = document.getElementById('panel-' + targetId);
+        const DURATION    = 400;
+        const EASE        = 'cubic-bezier(.22,1,.36,1)';
+
+        animating = true;
+
+        // Update nav buttons immediately
+        buttons.forEach(b => {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+        });
+
+        // Lock height to current panel height
+        container.style.height = oldPanel.offsetHeight + 'px';
+
+        // Position new panel off-screen (no transition yet)
+        newPanel.style.cssText = `
+          position: absolute;
+          top: 0; left: 0; width: 100%;
+          transform: translateX(${direction * 105}%);
+          opacity: 0;
+          transition: none;
+          pointer-events: none;
+        `;
+
+        // Force reflow so initial position registers
+        newPanel.offsetHeight;
+
+        // Animate both panels simultaneously
+        const transitionVal = `transform ${DURATION}ms ${EASE}, opacity ${DURATION * 0.75}ms ease`;
+
+        newPanel.style.transition = transitionVal;
+        newPanel.style.transform  = 'translateX(0%)';
+        newPanel.style.opacity    = '1';
+
+        oldPanel.style.transition = transitionVal;
+        oldPanel.style.transform  = `translateX(${-direction * 105}%)`;
+        oldPanel.style.opacity    = '0';
+
+        // After transition: clean up
+        setTimeout(() => {
+          // Reset old panel
+          oldPanel.classList.remove('active');
+          oldPanel.removeAttribute('style');
+
+          // Activate new panel
+          newPanel.removeAttribute('style');
+          newPanel.classList.add('active');
+
+          // Animate height to new panel
+          container.style.height = newPanel.offsetHeight + 'px';
+          container.addEventListener('transitionend', function onEnd() {
+            container.style.height = 'auto';
+            container.removeEventListener('transitionend', onEnd);
+          }, { once: true });
+
+          currentIdx = targetIdx;
+          animating  = false;
+        }, DURATION);
+      });
+    });
+  </script>
+</body>
+</html>
