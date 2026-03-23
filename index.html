@@ -66,6 +66,26 @@
     }
     .boop-circle.dragging { cursor: grabbing; }
 
+    .boop-hint {
+      position: fixed;
+      top: 68px;          /* sits just below the 42px circle at top:20px */
+      left: 41px;         /* horizontally centred on the circle (20 + 21) */
+      transform: translateX(-50%);
+      z-index: 1000;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(74, 69, 61, 0.5);
+      pointer-events: none;
+      text-align: center;
+      line-height: 1.5;
+      white-space: nowrap;
+      transition: opacity 0.5s ease;
+    }
+    .boop-hint.hidden { opacity: 0; }
+
     /* ══════════════════════════════════
        HAMBURGER
     ══════════════════════════════════ */
@@ -327,6 +347,7 @@
   <audio id="dragAudio" src="drag-sound.mp3" preload="auto"></audio>
 
   <div class="boop-circle"  id="boopCircle" role="button" aria-label="Boop"></div>
+  <div class="boop-hint" id="boopHint">↑<br>pull me</div>
   <div class="site-title"   id="siteTitle">MELATONIN</div>
   <div class="hamburger"    id="hamburger"  role="button" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -387,8 +408,8 @@
       <p class="section-label">About</p>
       <p class="bio-greeting">Hey you! I am Melatonin — Mela for short.</p>
       <p class="bio-text">
-        I am a 5 year old rescued moyen poodle and a psychiatric service dog. I am made of cotton candy, unconditional love, 
-        Parisian chic, street smarts and goofiness. I've got range, it's a gift.
+        I am a rescued moyen poodle and a psychiatric service dog trained in deep pressure
+        therapy and more. I am simultaneously unhinged and therapeutic. It's a gift.
       </p>
     </div>
   </section>
@@ -399,15 +420,18 @@
       <p class="section-label">Backstory</p>
       <p class="bio-text">
         My origin story? Think less "fairy-tale rescue" and more "strategic positioning."
-        In the summer of 2023, I was girlbossing my way around the streets of Changsha, China —
-        accepting handouts, cultivating mystique, looking more snatched than any amout of 
-        GLPs ever could achieve — that was when my human discovered me munching on spam
-        and decided I was prime material for their next "I could fix her" project: an 
-        Anne Hathaway Princess Bride style glow up. 
-        I too knew deep down that I was meant for a bigger, more international stage, 
-        so I followed them to domesticity.
+        In the summer of 2023, I was casually haunting a hair salon in Changsha, China —
+        accepting handouts, cultivating mystique — when my human walked in for a bleach job
+        and apparently decided I was a better investment than highlights. She wasn't wrong.
       </p>
-      <p class="bio-text">I now live in a studio apartment with a cat and a human. It suits me more.</p>
+      <p class="bio-text">
+        I was, at the time, unusually emaciated — a fact I attribute entirely to the salon's
+        uninspired menu. My human noticed, took me home, and the rest is history.
+        I am a moyen poodle, or possibly a standard who simply decided full-size was
+        unnecessary effort — the jury is still out. Born around 2021, my early years
+        were spent honing the art of survival on the streets of Changsha.
+      </p>
+      <p class="bio-text">I now live indoors. It suits me.</p>
     </div>
   </section>
 
@@ -415,21 +439,15 @@
   <section class="content-section" id="info" style="padding-top:20px;">
     <div class="bio-card">
       <p class="section-label">Info</p>
-      <p class="bio-text">🐩 &nbsp;Breed: Moyen poodle — or possibly a standard</p>
-      <p class="bio-text" style="margin-top:14px;">🎂 &nbsp;Age: Born approx. 2021, ~5 years old</p>
-      <p class="bio-text" style="margin-top:14px;">🧬 &nbsp;Gender: It's a obviously construct, but if you must know, I pee sitting down</p>
-      <p class="bio-text" style="margin-top:14px;">🧠 &nbsp;Job: I work full time as a psychiatric service dog</p>
-      <p class="bio-text" style="margin-top:14px;">🦾 &nbsp;Skills: deep pressure therapy, compulsive behavior interruption, side eye,
-        silent judgement of weird behavior, emotional support</p>
-      <p class="bio-text" style="margin-top:14px;">🐈 &nbsp;Roommate: I take all my naps with Pingping the Siamese</p>
-      <p class="bio-text" style="margin-top:14px;">🐦 &nbsp;Interests: I like to hike, chase red balls + avians of all sizes. Although if you
-      asked me to retrieve a ball, that's a different job desciption. I charge separately for that.</p>
-      <p class="bio-text" style="margin-top:14px;">🥩 &nbsp;Dietary preferences: To overcompensate for spending my early years in the streets,
-        I've since decided that I am to commit to carnivorism, but challah and carbs cooked in chicken fat are also accepted</p>
-      <p class="bio-text" style="margin-top:14px;">💕 &nbsp;Things I love: butt scritches, all meat snacks, unprompted sprints, cheese</p>
-      <p class="bio-text" style="margin-top:14px;">👀 &nbsp;Things I hate: non-consensual kisses, feeling fomo, 
-        middle aged men who look like Trump</p>
-      <p class="bio-text" style="margin-top:14px;">⚡ &nbsp;Personality: Docile at rest. Unhinged in motion.</p>
+      <p class="bio-text">🐩 &nbsp;Moyen poodle — or possibly a standard who decided full-size was too much effort</p>
+      <p class="bio-text" style="margin-top:14px;">🎂 &nbsp;Born approx. 2021</p>
+      <p class="bio-text" style="margin-top:14px;">🇨🇳 &nbsp;Rescued from the streets of Changsha, China</p>
+      <p class="bio-text" style="margin-top:14px;">🧠 &nbsp;Fully certified psychiatric service dog — trained in deep pressure therapy</p>
+      <p class="bio-text" style="margin-top:14px;">🐈 &nbsp;Cohabitates with a Siamese cat. The cuddling is non-negotiable.</p>
+      <p class="bio-text" style="margin-top:14px;">🐦 &nbsp;Professional bird surveillance officer. Off duty only in theory.</p>
+      <p class="bio-text" style="margin-top:14px;">🔴 &nbsp;Chases red balls with fierce conviction. Does not retrieve them.</p>
+      <p class="bio-text" style="margin-top:14px;">🥩 &nbsp;Committed carnivore — Challah and rice cooked in chicken fat excepted.</p>
+      <p class="bio-text" style="margin-top:14px;">⚡ &nbsp;Docile at rest. Unhinged in motion.</p>
     </div>
   </section>
 
@@ -849,9 +867,12 @@
       circle.appendChild(img);
     })();
 
+    const hint = document.getElementById('boopHint');
+
     let posX = ANCHOR.x, posY = ANCHOR.y;
     let velX = 0, velY = 0;
     let isDragging = false, dragStarted = false, audioPlayed = false;
+    let audioUnlocked = false;   /* iOS requires audio unlock inside a direct gesture */
     let springActive = false;
 
     const K = 0.15, DAMPING = 0.88;
@@ -901,6 +922,15 @@
     });
 
     circle.addEventListener('pointerdown', e => {
+      /* Unlock audio here — pointerdown is a qualifying gesture on iOS.
+         Play + immediately pause so the element is primed for later use. */
+      if (!audioUnlocked) {
+        audioUnlocked = true;
+        dragAudio.play().then(() => {
+          dragAudio.pause();
+          dragAudio.currentTime = 0;
+        }).catch(() => {});
+      }
       isDragging = true; dragStarted = false; audioPlayed = false;
       springActive = false; velX = 0; velY = 0;
       circle.setPointerCapture(e.pointerId);
@@ -912,6 +942,7 @@
       if (!isDragging) return;
       if (hypot(e.clientX - ANCHOR.x, e.clientY - ANCHOR.y) > 5) {
         dragStarted = true;
+        hint.classList.add('hidden');   /* fade out hint on first real drag */
         if (!audioPlayed) {
           audioPlayed = true;
           dragAudio.currentTime = 0;
